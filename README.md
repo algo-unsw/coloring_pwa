@@ -5,5 +5,5 @@ This repo contains the following files:
 3. jupyter notebooks for 4-Coloring and #3-Coloring that can call the above codes and run optimization.
 
 
-Note:
-- Please create a folder name "f" inside of fourc and threecount folder. Jupyter notebooks will need these folder to load files into dataframes. 
+<!-- Note: -->
+<!-- - Please create a folder name "f" inside of fourc and threecount folder. Jupyter notebooks will need these folder to load files into dataframes.  -->

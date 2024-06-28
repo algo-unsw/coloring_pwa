@@ -1,7 +1,7 @@
 reset;
 
-#option solver minos;
-#option solver snopt; #not great...
+option solver minos;
+# option solver snopt; #not great...
 #option solver bonmin;
 #option solver ipopt; 
 #options ipopt_options "halt_on_ampl_error=yes";
@@ -15,14 +15,16 @@ option display_precision 8;
 
 #data ../improved.data;
 model threecount.mod;
+shell "mkdir -p results";
 
 
-
-param j = 3; # three coloring
-param p = 1500; #number of pieces
+param num_c = 3; # four coloring
+param p = 100; #number of pieces
 param start = 0; #k/n starting ratio, we can set it to a value that corresponds to harder instances
+
 param b_k = 2/3; #k/n ratio upper bound
 param length = (b_k - start)/p; #let length be the length of each piece
+
 
 let base := start;
 
@@ -33,57 +35,47 @@ for {i in 1..p}{
 	
 	let l := base;
 	let u := l + length;
-	let b_s := 1 - l; #upper bound of independent set size
+	# let b_s := 1 - l; #upper bound of independent set size
 	
 	solve;
 		
 		
 	printf "\n---START %d round---\n", i;
-	display _varname, _var, _var.rc,base,l,u,b_k,b_s,alpha,run_w,2^run_b,run;
+	display _varname, _var, _var.rc,base,l,u,b_k,b_s,alpha[1],run_w,run_b,run;
 	printf "\n---END %d round---\n", i;
 	
-	printf "%11.8f %11.8f %11.8f %11.8f %11.8f %11.8f %11.8f %11.8f %11.8f %11.8f %11.8f %11.8f %11.8f %11.8f %11.8f %11.8f %11.8f %11.8f\n",
-    l,u,run_w,2^run_b, run,w1, wk4,wk5,wk6, wk3,wk2,ws,alpha6,alpha5,alpha4, alpha3, alpha2,alpha > ("./f/all_" & j & ".out");
+
+	printf "%11.8f %11.8f %11.8f %11.8f %11.8f %11.8f ",l,u,run_w,2^run_b, run,w1 > ("./results/all_" & num_c & ".out");
+    for {j in 2..N}{
+    	printf "%11.8f ",wk[j] > ("./results/all_" & num_c & ".out");
+    }
+	printf "%11.8f %11.8f %11.8f %11.8f %11.8f %11.8f %11.8f\n",w_s,alpha[6], alpha[5],alpha[4], alpha[3], alpha[2],alpha[1] > ("./results/all_" & num_c & ".out");
 	
 	printf "%11.8f %11.8f %11.8f %11.8f %11.8f\n",
-    l,u,run_w,2^run_b, run > ("./f/runtime_" & j & ".out");
+    l,u,run_w,2^run_b, run > ("./results/runtime_" & num_c & ".out");
     
-    printf "%11.8f %11.8f %11.8f %11.8f %11.8f %11.8f %11.8f %11.8f\n",
-    l,u,w1, wk6,wk5, wk4, wk3,wk2,ws > ("./f/weights_" & j & ".out");
+    printf "%11.8f %11.8f %11.8f ",l,u,w1 > ("./results/weights_" & num_c & ".out");
+    for {j in 2..N}{
+    	printf "%11.8f ",wk[j] > ("./results/weights_" & num_c & ".out");
+    }
+    printf "%11.8f\n",w_s > ("./results/weights_" & num_c & ".out");
    
-    printf "%11.8f %11.8f %11.8f %11.8f %11.8f %11.8f %11.8f\n",
-    l,u,alpha6,alpha5,alpha4, alpha3, alpha2,alpha > ("./f/thresholds_" & j & ".out");
+    printf "%11.8f %11.8f %11.8f %11.8f %11.8f %11.8f %11.8f %11.8f\n",
+    l,u,alpha[6], alpha[5],alpha[4], alpha[3], alpha[2],alpha[1] > ("./results/thresholds_" & num_c & ".out");
 	
 		
 	  	
 	let base := u;
   	let w1 := 0;
-  	let wk6 := 0;
-  	let wk5 := 0;
-	let wk4 := 0;
-	let wk3 := 0;
-	let wk2 := 0;
-	let ws := 0;
-	let alpha6 := 0;
-	let alpha5 := 0;
-	let alpha4 := 0;
-	let alpha3 := 0;
-	let alpha2 := 0;
-	let alpha := 0;
+    for {j in 2..N}{
+    	let wk[j] := 0;
+    }
+	let w_s := 0;
+	let alpha[6] := 0;
+	let alpha[5] := 0;
+	let alpha[4] := 0;
+	let alpha[3] := 0;
+	let alpha[2] := 0;
+	let alpha[1] := 0;
 	let run := 0;
 }
-
-/*	
-
-reset;
-model test_input_d.mod;
-printf "-------------------------------------------------------------------------------------\n";
-printf "TESTING single input, before solving\n";
-display step,l,l_minus_1_rt,budget_k_base,budget_k_l,budget_k_u,budget_k,threshold_d4,threshold_d3,threshold_d2,threshold,c,budget_is,run_silly_branching,run_tw_vc_bound;
-display w1,wk_d4,wk_d3,wk_d2,wis,run,run_tw,mini_run; 
-			
-solve;#display _varname, _var, _var.rc,budget_k_l,budget_k,budget_is,threshold, 2^run_silly_branching,run_mls,run;
-printf "------After solving------";
-display _varname, _var, _var.rc,budget_k_base,budget_k_l,budget_k_u,budget_k,budget_is,threshold, run_tw,2^run_silly_branching,mini_run;
-*/
-	
