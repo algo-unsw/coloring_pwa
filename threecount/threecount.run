@@ -19,7 +19,7 @@ shell "mkdir -p results";
 
 
 param num_c = 3; # four coloring
-param p = 100; #number of pieces
+param p = 10; #number of pieces
 param start = 0; #k/n starting ratio, we can set it to a value that corresponds to harder instances
 
 param b_k = 2/3; #k/n ratio upper bound

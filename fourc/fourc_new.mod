@@ -36,7 +36,7 @@ minimize Obj: run;
 
 
 subject to con_thre_ab_s_order_1{ i in 2..N}:
-	alpha[i] <= min(alpha[i-1],(alpha[1]-beta[i])/(1-beta[i]));
+	alpha[i] = (alpha[1]-beta[i])/(1-beta[i]);
 	
 subject to con_thre_ab_s_order_2:
 	alpha[1] <= 1;
