@@ -2,7 +2,7 @@ reset;
 
 option solver minos;
 # option solver snopt; #not great...
-# option solver bonmin;
+#option solver bonmin;
 # option solver ipopt; 
 #options ipopt_options "halt_on_ampl_error=yes";
 #option solver loqo; #give the same answer as ipopt
